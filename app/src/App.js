@@ -5,18 +5,22 @@ import { PrimaryButton } from 'office-ui-fabric-react/lib/Button';
 import { DefaultButton, Callout, Link, getTheme, FontWeights, mergeStyleSets, getId } from 'office-ui-fabric-react';
 import Map from './Map';
 import axios from 'axios';
+import { Checkbox, ICheckboxProps } from 'office-ui-fabric-react/lib/Checkbox';
+import { Stack } from 'office-ui-fabric-react/lib/Stack';
 
 function App() {
   const [funTime, setFunTime] = useState(null);
+  const [isChecked, setIsChecked] = useState(true);
+  const stackTokens = { childrenGap: 10 };
 
-
-
-
-
-  useEffect(async () => {
-    const { data } = await axios.get('https://hackthejourney.azurewebsites.net/api/funTimeEstimator?code=ml7BNPu1yn5X1isuPib9EsHlDN5saulowFaEB3F9NoLC0ARBy0lZGQ%3D%3D')
-    const { funTime } = data
-    setFunTime(funTime);
+  
+  useEffect(() => {
+    const getFunTime = async () => {
+      const { data } = await axios.get('https://hackthejourney.azurewebsites.net/api/funTimeEstimator?code=ml7BNPu1yn5X1isuPib9EsHlDN5saulowFaEB3F9NoLC0ARBy0lZGQ%3D%3D')
+      const { funTime } = data
+      setFunTime(funTime);
+    }
+    getFunTime();
   }, [setFunTime])
 
 
@@ -39,27 +43,22 @@ function App() {
     },
   ]
 
-  function handleInputChange(event) {
-    const target = event.target;
-    const value = target.type = 'checkbox' ? target.checked : target.value;
-    const name = target.name
+  const onChange = (checked) => {
+    setIsChecked(!!checked);
   }
+
 
   return (
     <div className="App">
-      <Map funTime={funTime}></Map>
-      <div style={{width: '200px', height: '200px'}}>
-      {activityFilterBoxes.map( item => (
-       <label>
-         {item.name}
-         <input
-       name={item.name}
-       type='checkbox'
-      //  onChange= {this.handleInputChange}
-       ></input>
-       </label>
-      ))}
-    </div>
+    <Callout style={{width: '200px', height: '100px', padding: '20px'}}>
+        <Stack tokens={stackTokens}>
+        {activityFilterBoxes.map( item => (
+          <Checkbox label={item.name} checked={isChecked} onChange={onChange} />
+          ))}
+        </Stack>
+        </Callout>
+      <Map funTime={funTime}>
+      </Map>
     </div>
   );
 }

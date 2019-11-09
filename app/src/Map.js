@@ -9,13 +9,16 @@ const apiKey = '2ZIvXogrvo6X1mK16yreIt6zX6Ad9eLEFY_WgVWyAA0';
     {lat:41.4034, lng:2.17444}
   ];
 
-
 class Map extends React.Component {
+  state = {
+    map: null,
+    platform: null
+  }
   constructor(props) {
     super(props);
   }
 
-  loadMap() {
+  loadMap(isolineParams) {
     var platform = new window.H.service.Platform({
       apikey: apiKey
     });
@@ -44,13 +47,23 @@ class Map extends React.Component {
     // set map dark style
     this.setStyle(map);
 
-    var isolineParams = {
-      mode: "fastest;car;",
-      start: "geo!41.2974,2.0833",
-      range: "10800",
-      rangetype: "time"
-    };
+    this.setState({map, platform})
+  }
 
+  setStyle(map){
+    // get the vector provider from the base layer
+    var provider = map.getBaseLayer().getProvider();
+    // Create the style object from the YAML configuration.
+    // First argument is the style path and the second is the base URL to use for
+    // resolving relative URLs in the style like textures, fonts.
+    // all referenced resources relative to the base path https://js.api.here.com/v3/3.1/styles/omv.
+    var style = new window.H.map.Style('https://heremaps.github.io/maps-api-for-javascript-examples/change-style-at-load/data/dark.yaml',
+      'https://js.api.here.com/v3/3.1/styles/omv/');
+    // set the style on the existing layer
+    provider.setStyle(style);
+  }
+
+  addIsoline(funTime, map, platform){
     var onResult = function(result) {
       var center = new window.H.geo.Point(
           result.response.center.latitude,
@@ -84,34 +97,40 @@ class Map extends React.Component {
             map.addObject(new window.H.map.Marker(item));
           });    };
 
+          var isolineParams = {
+      mode: "fastest;truck;",
+      start: "geo!41.2974,2.0833",
+      range: parseInt(funTime),
+      rangetype: "time"
+    };
     // Get an instance of the routing service:
     var router = platform.getRoutingService();
-    // Call the Routing API to calculate an isoline:
+    // console.log('ISOLINE PARAMS', isolineParams)
+    // // Call the Routing API to calculate an isoline:
+    // if (!isolineParams){
+    //   return
+    // }
     router.calculateIsoline(isolineParams, onResult, function(error) {
       alert(error.message);
     });
-  }
-
-  setStyle(map){
-    // get the vector provider from the base layer
-    var provider = map.getBaseLayer().getProvider();
-    // Create the style object from the YAML configuration.
-    // First argument is the style path and the second is the base URL to use for
-    // resolving relative URLs in the style like textures, fonts.
-    // all referenced resources relative to the base path https://js.api.here.com/v3/3.1/styles/omv.
-    var style = new window.H.map.Style('https://heremaps.github.io/maps-api-for-javascript-examples/change-style-at-load/data/dark.yaml',
-      'https://js.api.here.com/v3/3.1/styles/omv/');
-    // set the style on the existing layer
-    provider.setStyle(style);
   }
 
 
   componentDidMount() {
       this.loadMap();
   }
+
+  componentDidUpdate() {
+    if (!this.props.funTime) {
+      return
+    }
+    this.addIsoline(((this.props.funTime*60)/3), this.state.map, this.state.platform);
+  }
+
   render() {
       console.log(this.props.funTime)
     return <div style={{width: '100%', height: '800px'}} id="mapContainer"></div>;
   }
 }
+
 export default Map;
