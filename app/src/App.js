@@ -6,6 +6,7 @@ import { DefaultButton, Callout, Link, getTheme, FontWeights, mergeStyleSets, ge
 
 function App() {
 
+  const apiKey = '2ZIvXogrvo6X1mK16yreIt6zX6Ad9eLEFY_WgVWyAA0';
   function setStyle(map){
     // get the vector provider from the base layer
     var provider = map.getBaseLayer().getProvider();
@@ -20,9 +21,20 @@ function App() {
   }
 
 
+  function addMarkersToMap(map) {
+    var fakeLocation1 = new window.H.map.Marker({lat:41.4034, lng:2.15444});
+    map.addObject(fakeLocation1);
+
+    var fakeLocation2 = new window.H.map.Marker({lat:41.4034, lng:2.16444});
+    map.addObject(fakeLocation2);
+
+    var sagradaFamilia = new window.H.map.Marker({lat:41.4034, lng:2.17444});
+    map.addObject(sagradaFamilia);
+}
+
   function loadMap() {
     var platform = new window.H.service.Platform({
-      'apikey': '2ZIvXogrvo6X1mK16yreIt6zX6Ad9eLEFY_WgVWyAA0'
+      'apikey': apiKey
     });
       // Obtain the default map types from the platform object:
     var defaultLayers = platform.createDefaultLayers();
@@ -80,6 +92,8 @@ function App() {
     // Center and zoom the map so that the whole isoline polygon is
   // in the viewport:
   map.getViewModel().setLookAtData({bounds: isolinePolygon.getBoundingBox()});
+  
+  addMarkersToMap(map);
 };
 
 // Get an instance of the routing service:
