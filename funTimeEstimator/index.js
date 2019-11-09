@@ -42,15 +42,22 @@ module.exports = async function (context, req) {
     // Month mocked because of test data
     const getRelevantMonth = (array, year, month) => array.find(element => element.period.includes(`${(Number(year)-1)}-03`))
 
-    const getFunTime = (busiestArrival, busiestDeparture, airportPerformance, flightDelay) => {
+    const getPenaltyTime = (busiestArrival, busiestDeparture, airportPerformance, flightDelay) => {
         let funTime = MINIMUM_CONNECTING_TIME;
-
         funTime += (busiestArrival.analytics.travelers.score / 100) * TIME_PENALTIES.busiest;
+        context.log('BusiestArrival min', (busiestArrival.analytics.travelers.score / 100) * TIME_PENALTIES.busiest)
         funTime += (busiestDeparture.analytics.travelers.score  / 100) * TIME_PENALTIES.busiest;
-        funTime += (100 - airportPerformance.probability) * TIME_PENALTIES.onTimePerformance;
+        context.log('BusiestDeparture min', (busiestDeparture.analytics.travelers.score  / 100) * TIME_PENALTIES.busiest)
+        funTime += (1 - airportPerformance.probability) * TIME_PENALTIES.onTimePerformance;
+        context.log('airportPerformance min', ((100 - airportPerformance.probability) * TIME_PENALTIES.onTimePerformance)),
         funTime += (flightDelay) * TIME_PENALTIES.flightDelay;
+        context.log('flightDelay min', (flightDelay) * TIME_PENALTIES.flightDelay);
         return funTime;
     }
+    const parseTime = (s) => {
+        var c = s.split(':');
+        return parseInt(c[0]) * 60 + parseInt(c[1]);
+     }
 
     const amadeus = new Amadeus({
         clientId: 'XtvzCIgtgvkVJUqsnLKqS6TgrAqK1Mra',
@@ -66,6 +73,9 @@ module.exports = async function (context, req) {
           const [year, month, day] = dateTimeArrival.split(' ').shift().split('-');
           const date = `${year}-${month}-${day}`;
 
+          const arrivalTime = dateTimeArrival.split(' ').pop();
+          const departureTime = dateTimeDeparture.split(' ').pop();
+
           // Mocked 'LON', Barcelona is not in the test data
           const {data: busiestPeriodArrival} = await getBusiestPeriod('LON', Amadeus.direction.arriving);
           const busiestMonthArrival = getRelevantMonth(busiestPeriodArrival, year, month)
@@ -80,14 +90,19 @@ module.exports = async function (context, req) {
             /**
              * MAGIC HAPPENS HERE
              */
-          const funTime = getFunTime(busiestMonthArrival, busiestMonthDeparture, airportPerformance, totalFlightDelay);
+          const penaltyTime = getPenaltyTime(busiestMonthArrival, busiestMonthDeparture, airportPerformance, totalFlightDelay);
 
+          const timeInAirport = parseTime(departureTime) - parseTime(arrivalTime)
+          const funTime = timeInAirport  - penaltyTime;
 
           context.res = {
               status: 200,
               body:{
                 funTime,
                 ...debug && {
+                    totalTime: parseTime(departureTime) - parseTime(arrivalTime),
+                    departureTime,
+                    arrivalTime,
                     totalFlightDelay,
                     busiestMonthArrival,
                     busiestMonthDeparture,
