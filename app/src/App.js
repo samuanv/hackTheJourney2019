@@ -1,25 +1,53 @@
-import React from 'react';
+import React, {useState} from 'react';
 import logo from './logo.svg';
 import './App.css';
+import { PrimaryButton } from 'office-ui-fabric-react/lib/Button';
+import { DefaultButton, Callout, Link, getTheme, FontWeights, mergeStyleSets, getId } from 'office-ui-fabric-react';
 
 function App() {
-  function loadMap() {
-    console.log('window.H where are you', window.H);
-  var platform = new window.H.service.Platform({
-    'apikey': '2ZIvXogrvo6X1mK16yreIt6zX6Ad9eLEFY_WgVWyAA0'
-  });
-    // Obtain the default map types from the platform object:
-  var defaultLayers = platform.createDefaultLayers();
 
-  // Instantiate (and display) a map object:
-  var map = new window.H.Map(
-    document.getElementById('mapContainer'),
-    defaultLayers.vector.normal.map,
-    {
-      zoom: 10,
-      center: { lat:41.3851, lng: 2.1734 }
+  function setStyle(map){
+    // get the vector provider from the base layer
+    var provider = map.getBaseLayer().getProvider();
+    // Create the style object from the YAML configuration.
+    // First argument is the style path and the second is the base URL to use for
+    // resolving relative URLs in the style like textures, fonts.
+    // all referenced resources relative to the base path https://js.api.here.com/v3/3.1/styles/omv.
+    var style = new window.H.map.Style('https://heremaps.github.io/maps-api-for-javascript-examples/change-style-at-load/data/dark.yaml',
+      'https://js.api.here.com/v3/3.1/styles/omv/');
+    // set the style on the existing layer
+    provider.setStyle(style);
+  }
+
+
+  function loadMap() {
+    var platform = new window.H.service.Platform({
+      'apikey': '2ZIvXogrvo6X1mK16yreIt6zX6Ad9eLEFY_WgVWyAA0'
     });
-  console.log('map: ', map);
+      // Obtain the default map types from the platform object:
+    var defaultLayers = platform.createDefaultLayers();
+
+    // Instantiate (and display) a map object:
+    var map = new window.H.Map(
+      document.getElementById('mapContainer'),
+      defaultLayers.vector.normal.map,
+      {
+        zoom: 10,
+        center: { lat:41.3851, lng: 2.1734 }
+      });
+
+    window.addEventListener('resize', () => map.getViewPort().resize());
+    // var behavior = new window.H.mapevents.Behavior(new window.H.mapevents.MapEvents(map));
+
+    // Add map events functionality to the map
+    var mapEvents = new window.H.mapevents.MapEvents(map);
+
+    // Add behavior to the map: panning, zooming, dragging.
+    var behavior = new window.H.mapevents.Behavior(mapEvents);
+
+    // set map dark style
+    setStyle(map);
+
     var isolineParams = {
       'mode': 'fastest;car;',
       'start': 'geo!41.2974,2.0833',
@@ -43,6 +71,7 @@ function App() {
 
     // Create a polygon and a marker representing the isoline:
     isolinePolygon = new window.H.map.Polygon(linestring);
+    // var icon = new window.H.map.Icon('airport-icon.png');
     isolineCenter = new window.H.map.Marker(center);
 
     // Add the polygon and marker to the map:
@@ -70,10 +99,41 @@ router.calculateIsoline(
     console.log('DOM is ready');
     loadMap();
   });
+
+  const activityFilterBoxes = [
+    { name: 'Points of Interest',
+      key: 'checkbox1',
+    },
+    { name: 'Restaurants',
+      key: 'checkbox2',
+    },
+    { name: 'Charities',
+      key: 'checkbox3',
+    },
+  ]
+
+  function handleInputChange(event) {
+    const target = event.target;
+    const value = target.type = 'checkbox' ? target.checked : target.value;
+    const name = target.name
+  }
      
   return (
     <div className="App">
-      <div style={{width: '100%', height: '480px'}} id="mapContainer"></div>
+      <div style={{width: '100%', height: '800px'}} id="mapContainer">
+      <div style={{width: '200px', height: '200px'}}>
+      {activityFilterBoxes.map( item => (
+       <label>
+         {item.name}
+         <input
+       name={item.name}
+       type='checkbox'
+      //  onChange= {this.handleInputChange}
+       ></input>
+       </label>
+      ))}
+    </div>
+      </div>
     </div>
   );
 }
