@@ -6,7 +6,14 @@ import { DefaultButton, Callout, Link, getTheme, FontWeights, mergeStyleSets, ge
 
 function App() {
 
+  //define consts for our app
   const apiKey = '2ZIvXogrvo6X1mK16yreIt6zX6Ad9eLEFY_WgVWyAA0';
+  const locations = [
+    {lat:41.4034, lng:2.15444},
+    {lat:41.4034, lng:2.16444},
+    {lat:41.4034, lng:2.17444}
+  ];
+
   function setStyle(map){
     // get the vector provider from the base layer
     var provider = map.getBaseLayer().getProvider();
@@ -22,14 +29,9 @@ function App() {
 
 
   function addMarkersToMap(map) {
-    var fakeLocation1 = new window.H.map.Marker({lat:41.4034, lng:2.15444});
-    map.addObject(fakeLocation1);
-
-    var fakeLocation2 = new window.H.map.Marker({lat:41.4034, lng:2.16444});
-    map.addObject(fakeLocation2);
-
-    var sagradaFamilia = new window.H.map.Marker({lat:41.4034, lng:2.17444});
-    map.addObject(sagradaFamilia);
+    locations.forEach(function(item){
+      map.addObject(new window.H.map.Marker(item));
+    });
 }
 
   function loadMap() {
