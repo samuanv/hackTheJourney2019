@@ -19,7 +19,7 @@ function App() {
   
   useEffect(() => {
     const getFunTime = async () => {
-      const { data } = await axios.get('https://hackthejourney.azurewebsites.net/api/funTimeEstimator?code=ml7BNPu1yn5X1isuPib9EsHlDN5saulowFaEB3F9NoLC0ARBy0lZGQ%3D%3D')
+      const { data } = await axios.get('https://hackthejourney.azurewebsites.net/api/funTimeEstimator?code=ml7BNPu1yn5X1isuPib9EsHlDN5saulowFaEB3F9NoLC0ARBy0lZGQ%3D%3D&dateTimeArrival=2019-11-10%208:30&dateTimeDeparture=2019-11-10%2013:30')
       const { funTime } = data
       setFunTime(funTime);
     }
