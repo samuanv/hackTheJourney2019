@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import logo from './logo.svg';
 import './App.css';
 import { PrimaryButton } from 'office-ui-fabric-react/lib/Button';
-import { DefaultButton, Callout, Link, getTheme, FontWeights, mergeStyleSets, getId } from 'office-ui-fabric-react';
+import { DefaultButton, Callout, FontIcon, Link, getTheme, FontWeights, mergeStyleSets, getId, Label } from 'office-ui-fabric-react';
 import Map from './Map';
 import axios from 'axios';
 import { Checkbox, ICheckboxProps } from 'office-ui-fabric-react/lib/Checkbox';
@@ -16,7 +16,7 @@ function App() {
   const stackTokens = { childrenGap: 10 };
   initializeIcons();
 
-  
+
   useEffect(() => {
     const getFunTime = async () => {
       const { data } = await axios.get('https://hackthejourney.azurewebsites.net/api/funTimeEstimator?code=ml7BNPu1yn5X1isuPib9EsHlDN5saulowFaEB3F9NoLC0ARBy0lZGQ%3D%3D&dateTimeArrival=2019-11-10%208:30&dateTimeDeparture=2019-11-10%2013:30')
@@ -47,8 +47,15 @@ function App() {
   const onChange = (checked) => {
     setIsChecked(!!checked);
   }
-
-
+  const convertMinsToHrsMins = (mins) => {
+    let h = Math.floor(mins / 60);
+    let m = mins % 60;
+    h = h < 10 ? '0' + h : h;
+    m = m < 10 ? '0' + m : m;
+    return `${h}:${m}`;
+  }
+  const [hour, min] = convertMinsToHrsMins(parseInt(funTime)).split(':');
+  const label = `${hour} hours and ${min} minutes`;
   return (
     <div className="App">
     <Callout style={{width: '200px', height: '150px', padding: '20px'}}>
@@ -58,9 +65,11 @@ function App() {
           ))}
         </Stack>
         </Callout>
-        {!funTime && <div><Callout style={{width: '200px', height: '70px', padding: '20px', marginTop: '200px'}}>
-        <Spinner size={SpinnerSize.large} label="Calculating distances, please wait" ariaLive="assertive" labelPosition="top" />
-        </Callout></div>}
+        <Callout style={{width: '200px', height: '70px', padding: '20px', marginTop: '200px'}}>
+          {!funTime && <Spinner size={SpinnerSize.large} label="Calculating distances, please wait" ariaLive="assertive" labelPosition="top" />}
+          {funTime &&
+ <Label> Fun Time calculated:<br/>  You have {label} to enjoy Barcelona!</Label>}
+        </Callout>
       <Map funTime={funTime}>
       </Map>
     </div>
