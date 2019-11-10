@@ -6,15 +6,16 @@ const apiKey = '2ZIvXogrvo6X1mK16yreIt6zX6Ad9eLEFY_WgVWyAA0';
 const charity = 'https://cdn3.iconfinder.com/data/icons/flat-pro-basic-set-1-1/32/location-green-64.png';
 const restaurant = 'https://cdn2.iconfinder.com/data/icons/places-4/100/food_place_marker_location_restaurant_eat_fork_knife-64.png'
 const bar = 'https://cdn2.iconfinder.com/data/icons/places-4/100/drink_place_marker_location_bar_coctail_party-64.png'
-const sagradaFamilia = 'https://cdn0.iconfinder.com/data/icons/famous-buildings-landmarks-volume-2/500/Sagrada_Familia-64.png';  
+const sagradaFamilia = 'https://cdn0.iconfinder.com/data/icons/famous-buildings-landmarks-volume-2/500/Sagrada_Familia-64.png';
 const locations = [
+    // {
+    //   url: restaurant,
+    //   coord: {lat:41.4034, lng:2.15444}
+    // // },{
+    //   url: bar,
+    //   coord: {lat:41.4034, lng:2.16444}
+    // },
     {
-      url: restaurant,
-      coord: {lat:41.4034, lng:2.15444}
-    },{
-      url: bar,
-      coord: {lat:41.4034, lng:2.16444}
-    },{
       url: sagradaFamilia,
       coord: {lat:41.4034, lng:2.17444}
     },
@@ -111,7 +112,7 @@ class Map extends React.Component {
 
       // Create a polygon and a marker representing the isoline:
       isolinePolygon = new window.H.map.Polygon(linestring);
-      
+
       var icon = new window.H.map.Icon('https://cdn2.iconfinder.com/data/icons/location-map-simplicity/512/airport-64.png');
       isolineCenter = new window.H.map.Marker(center, {icon:icon} );
 
