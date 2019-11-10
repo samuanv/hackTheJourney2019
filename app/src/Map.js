@@ -4,9 +4,36 @@ import React from "react";
 const apiKey = '2ZIvXogrvo6X1mK16yreIt6zX6Ad9eLEFY_WgVWyAA0';
   //define consts for our app
   const locations = [
-    {lat:41.4034, lng:2.15444},
-    {lat:41.4034, lng:2.16444},
-    {lat:41.4034, lng:2.17444}
+    {
+      url: 'https://cdn2.iconfinder.com/data/icons/places-4/100/food_place_marker_location_restaurant_eat_fork_knife-64.png',
+      coord: {lat:41.4034, lng:2.15444}
+    },{
+      url: 'https://cdn2.iconfinder.com/data/icons/places-4/100/drink_place_marker_location_bar_coctail_party-64.png',
+      coord: {lat:41.4034, lng:2.16444}
+    },{
+      url: 'https://cdn0.iconfinder.com/data/icons/famous-buildings-landmarks-volume-2/500/Sagrada_Familia-64.png',
+      coord: {lat:41.4034, lng:2.17444}
+    },
+    {
+      url: 'https://cdn2.iconfinder.com/data/icons/places-4/100/food_place_marker_location_restaurant_eat_fork_knife-64.png',
+      coord: {lat:41.31567, lng:2.05724}
+    },{
+      url: 'https://cdn2.iconfinder.com/data/icons/places-4/100/drink_place_marker_location_bar_coctail_party-64.png',
+      coord: {lat:41.31567, lng:2.08481}
+    },{
+      url: 'https://cdn2.iconfinder.com/data/icons/places-4/100/food_place_marker_location_restaurant_eat_fork_knife-64.png',
+      coord: {lat:41.37653, lng:2.15324}
+    },
+    {
+      url: 'https://cdn3.iconfinder.com/data/icons/flat-pro-basic-set-1-1/32/location-green-64.png',
+      coord: {lat:41.3275, lng:2.0979}
+    },{
+      url: 'https://cdn3.iconfinder.com/data/icons/flat-pro-basic-set-1-1/32/location-green-64.png',
+      coord: {lat:41.3482, lng:2.1228}
+    },{
+      url: 'https://cdn3.iconfinder.com/data/icons/flat-pro-basic-set-1-1/32/location-green-64.png',
+      coord: {lat:41.3601, lng:2.0786}
+    },
   ];
 
 class Map extends React.Component {
@@ -81,8 +108,9 @@ class Map extends React.Component {
 
       // Create a polygon and a marker representing the isoline:
       isolinePolygon = new window.H.map.Polygon(linestring);
-      // var icon = new window.H.map.Icon('airport-icon.png');
-      isolineCenter = new window.H.map.Marker(center);
+      
+      var icon = new window.H.map.Icon('https://cdn2.iconfinder.com/data/icons/location-map-simplicity/512/airport-64.png');
+      isolineCenter = new window.H.map.Marker(center, {icon:icon} );
 
       // Add the polygon and marker to the map:
       map.addObjects([isolineCenter, isolinePolygon]);
@@ -94,7 +122,8 @@ class Map extends React.Component {
         .setLookAtData({ bounds: isolinePolygon.getBoundingBox() });
 
         locations.forEach(function(item){
-            map.addObject(new window.H.map.Marker(item));
+          var markerIcon = new window.H.map.Icon(item.url);
+            map.addObject(new window.H.map.Marker(item.coord, {icon: markerIcon}));
           });    };
 
           var isolineParams = {
@@ -105,11 +134,7 @@ class Map extends React.Component {
     };
     // Get an instance of the routing service:
     var router = platform.getRoutingService();
-    // console.log('ISOLINE PARAMS', isolineParams)
-    // // Call the Routing API to calculate an isoline:
-    // if (!isolineParams){
-    //   return
-    // }
+
     router.calculateIsoline(isolineParams, onResult, function(error) {
       alert(error.message);
     });
