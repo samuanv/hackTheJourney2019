@@ -1,40 +1,44 @@
 import React from "react";
 
-
-const apiKey = '2ZIvXogrvo6X1mK16yreIt6zX6Ad9eLEFY_WgVWyAA0';
   //define consts for our app
-  const locations = [
+const apiKey = '2ZIvXogrvo6X1mK16yreIt6zX6Ad9eLEFY_WgVWyAA0';
+
+const charity = 'https://cdn3.iconfinder.com/data/icons/flat-pro-basic-set-1-1/32/location-green-64.png';
+const restaurant = 'https://cdn2.iconfinder.com/data/icons/places-4/100/food_place_marker_location_restaurant_eat_fork_knife-64.png'
+const bar = 'https://cdn2.iconfinder.com/data/icons/places-4/100/drink_place_marker_location_bar_coctail_party-64.png'
+const sagradaFamilia = 'https://cdn0.iconfinder.com/data/icons/famous-buildings-landmarks-volume-2/500/Sagrada_Familia-64.png';  
+const locations = [
     {
-      url: 'https://cdn2.iconfinder.com/data/icons/places-4/100/food_place_marker_location_restaurant_eat_fork_knife-64.png',
+      url: restaurant,
       coord: {lat:41.4034, lng:2.15444}
     },{
-      url: 'https://cdn2.iconfinder.com/data/icons/places-4/100/drink_place_marker_location_bar_coctail_party-64.png',
+      url: bar,
       coord: {lat:41.4034, lng:2.16444}
     },{
-      url: 'https://cdn0.iconfinder.com/data/icons/famous-buildings-landmarks-volume-2/500/Sagrada_Familia-64.png',
+      url: sagradaFamilia,
       coord: {lat:41.4034, lng:2.17444}
     },
     {
-      url: 'https://cdn2.iconfinder.com/data/icons/places-4/100/food_place_marker_location_restaurant_eat_fork_knife-64.png',
+      url: restaurant,
       coord: {lat:41.31567, lng:2.05724}
     },{
-      url: 'https://cdn2.iconfinder.com/data/icons/places-4/100/drink_place_marker_location_bar_coctail_party-64.png',
+      url: bar,
       coord: {lat:41.31567, lng:2.08481}
     },{
-      url: 'https://cdn2.iconfinder.com/data/icons/places-4/100/food_place_marker_location_restaurant_eat_fork_knife-64.png',
+      url: restaurant,
       coord: {lat:41.37653, lng:2.15324}
     },
     {
-      url: 'https://cdn3.iconfinder.com/data/icons/flat-pro-basic-set-1-1/32/location-green-64.png',
+      url: charity,
       coord: {lat:41.3275, lng:2.0979}
     },{
-      url: 'https://cdn3.iconfinder.com/data/icons/flat-pro-basic-set-1-1/32/location-green-64.png',
+      url: charity,
       coord: {lat:41.3482, lng:2.1228}
     },{
-      url: 'https://cdn3.iconfinder.com/data/icons/flat-pro-basic-set-1-1/32/location-green-64.png',
+      url: charity,
       coord: {lat:41.3601, lng:2.0786}
     },
-  ];
+];
 
 class Map extends React.Component {
   state = {
@@ -63,7 +67,6 @@ class Map extends React.Component {
     );
 
     window.addEventListener("resize", () => map.getViewPort().resize());
-    // var behavior = new window.H.mapevents.Behavior(new window.H.mapevents.MapEvents(map));
 
     // Add map events functionality to the map
     var mapEvents = new window.H.mapevents.MapEvents(map);
